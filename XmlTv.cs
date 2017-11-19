@@ -19,10 +19,23 @@ namespace EpgData
             foreach (var chan in epgData.Channels)
             {
                 var c = new XElement("channel");
-                c.Add(new XAttribute("id", chan.ChannelId));
-                var dn = new XElement("display-name");
-                c.Add(dn);
-                dn.Value = chan.DisplayName;
+                c.Add(new XAttribute("id", chan.ChannelId));               
+                if(string.IsNullOrEmpty(chan.CallSign))
+                {
+                    var dn = new XElement("display-name");
+                    c.Add(dn);
+                    dn.Value = chan.DisplayName;
+                }
+                if (chan.CallSign.Contains("|"))
+                {
+                    var csa = chan.CallSign.Split('|');
+                    foreach (var csv in csa)
+                    {
+                        var cs = new XElement("display-name");
+                        c.Add(cs);
+                        cs.Value = csv;
+                    }                    
+                }                
                 tv.Add(c);
             }
             foreach (var program in epgData.Programs)
